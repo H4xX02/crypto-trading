@@ -58,7 +58,7 @@ print('xxxxxxxxxxxxxxx')
 backtest(df, 22, 11)
 
 
-z1 = [11,22,33,44,55,66,77]
+z1 = [22,50,100,125,150,175,200]
 z2 = [11,22,33,44,55,66,77]
 
 q = np.linspace(1,100,100, dtype = 'int')
@@ -79,7 +79,14 @@ for i, x1 in enumerate(z1):
 
 print(result_matrix)
 
-print(result_matrix[6,5])
+print(result_matrix[0,0])
+
+plt.pcolor(z1,z2,result_matrix)
+plt.xlabel('MA_long')
+plt.ylabel('MA_short');
+plt.colorbar();
+
+plt.show()
 
 
 
