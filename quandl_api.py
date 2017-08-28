@@ -59,10 +59,8 @@ print('xxxxxxxxxxxxxxx')
 backtest(df, 22, 11)
 
 
-z1 = [22,50,100,125,150,175,200]
-z2 = [11,22,33,44,55,66,77]
-
-
+z1 = [22,50,75,90,100,125,150,175,200]
+z2 = [11,15,17,22,33,44,55,66,77,88,99]
 
 
 result_matrix = np.zeros((len(z1),len(z2)),dtype = 'int')
@@ -76,11 +74,11 @@ for i, x1 in enumerate(z1):
 
 print(result_matrix)
 
-print(result_matrix[0,0])
+## print(result_matrix[0,0])
 
-plt.pcolor(z1,z2,result_matrix)
-plt.xlabel('MA_long')
-plt.ylabel('MA_short');
+plt.pcolor(z2,z1,result_matrix)
+plt.xlabel('MA_fast')
+plt.ylabel('MA_slow');
 plt.colorbar();
 
 plt.show()
@@ -88,13 +86,15 @@ plt.show()
 i,j = np.unravel_index(result_matrix.argmax(),result_matrix.shape)
 result_matrix[j,i]
 
-print('opt MA_long %.2f' % z1[i])
-print('opt MA_short %.2f' % z2[j])
+print('opt MA_slow %.2f' % z1[i])
+print('opt MA_fast %.2f' % z2[j])
 
 print(z1[i])
 print(z2[j])
 
 backtest(df,z1[i],z2[j])
+
+
 
 
 
