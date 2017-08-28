@@ -10,7 +10,11 @@ from matplotlib import style
 
 ##get alltime daily BTC/USD quotes from Quandl: 
 
-df = quandl.get("BITFINEX/BTCUSD", authtoken="65bn72F_4tCtK9-XHnAu")
+keyFile = open('Authtokens.txt', 'r')
+quandly_token = keyFile.readline()
+
+
+df = quandl.get("BITFINEX/BTCUSD", authtoken= quandly_token)
 
 ## Model validation, calc returns and fast and slow Moving Average: Buy signal if MA_fast > MA_slow
 
@@ -73,5 +77,8 @@ for i, x1 in enumerate(z1):
 		result_matrix[i,j] = back
 
 print(result_matrix)
+
+
+
 
 
