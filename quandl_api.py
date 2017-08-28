@@ -81,6 +81,8 @@ print(result_matrix)
 
 print(result_matrix[6,5])
 
+fuck
+
 
 
 
