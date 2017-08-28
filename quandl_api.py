@@ -11,21 +11,22 @@ from matplotlib import style
 ##get alltime daily BTC/USD quotes from Quandl: 
 
 keyFile = open('Authtokens.txt', 'r')
-quandly_token = keyFile.readline()
+quandl_token = keyFile.readline()
 
 
-df = quandl.get("BITFINEX/BTCUSD", authtoken= quandly_token)
+df = quandl.get("BITFINEX/BTCUSD", authtoken= quandl_token)
 
-## Model validation, calc returns and fast and slow Moving Average: Buy signal if MA_fast > MA_slow
+## Model validation, calculate returns and fast (11) and slow (22) Moving Average: Buy signal if MA_fast > MA_slow, lock in t+1 return
 
 df['returns'] = df['Last'] - df['Last'].shift(1)
-df['ma22'] = df['Last'].rolling(window=22,min_periods=0).mean()
-df['ma11'] = df['Last'].rolling(window=11,min_periods=0).mean()
+df['ma_slow'] = df['Last'].rolling(window=22,min_periods=0).mean()
+df['ma_fast'] = df['Last'].rolling(window=11,min_periods=0).mean()
 df['cum_returns'] = np.cumsum(df['returns'])
 
-z = (df['ma11'] > df['ma22']) & (df['ma11'] != 0)
+z = (df['ma_fast'] > df['ma_slow']) & (df['ma_fast'] != 0)
 
 df['signal'] = z
+
 df['pnl'] = df['returns']*df['signal']
 df['cum_returns_ma_cross'] = np.cumsum(df['pnl'])
 
@@ -41,7 +42,7 @@ def backtest(df, ma1, ma2):
 	df['ma_fast'] = df['Last'].rolling(window=ma2,min_periods=0).mean()
 	df['cum_returns'] = np.cumsum(df['returns'])
 
-	z = (df['ma_fast'] > df['ma_slow']) & (df['ma11'] != 0)
+	z = (df['ma_fast'] > df['ma_slow']) & (df['ma_fast'] != 0)
 
 	df['signal'] = z
 	df['pnl'] = df['returns']*df['signal']
@@ -77,6 +78,8 @@ for i, x1 in enumerate(z1):
 		result_matrix[i,j] = back
 
 print(result_matrix)
+
+print(result_matrix[6,5])
 
 
 
