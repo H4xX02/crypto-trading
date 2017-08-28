@@ -18,7 +18,7 @@ df = quandl.get("BITFINEX/BTCUSD", authtoken= quandl_token)
 
 ## Model validation, calculate returns and fast (11) and slow (22) Moving Average: Buy signal if MA_fast > MA_slow, lock in t+1 return
 
-df['returns'] = df['Last'] - df['Last'].shift(1)
+df['returns'] = df['Last'] - df['Last'].shift(+1)
 df['ma_slow'] = df['Last'].rolling(window=22,min_periods=0).mean()
 df['ma_fast'] = df['Last'].rolling(window=11,min_periods=0).mean()
 df['cum_returns'] = np.cumsum(df['returns'])
@@ -27,17 +27,18 @@ z = (df['ma_fast'] > df['ma_slow']) & (df['ma_fast'] != 0)
 
 df['signal'] = z
 
-df['pnl'] = df['returns']*df['signal']
+df['pnl'] = df['returns'].shift(-1)*df['signal']
 df['cum_returns_ma_cross'] = np.cumsum(df['pnl'])
 
 print(df.tail())
+df.to_csv('BTC_MA_Cross.csv')
 
 ## backtest funtion: clean up!
 
 def backtest(df, ma1, ma2):
 	## ma1 = slow moving average
 	## ma2 = fast moving average
-	df['returns'] = df['Last'] - df['Last'].shift(1)
+	df['returns'] = df['Last'] - df['Last'].shift(+1)
 	df['ma_slow'] = df['Last'].rolling(window=ma1,min_periods=0).mean()
 	df['ma_fast'] = df['Last'].rolling(window=ma2,min_periods=0).mean()
 	df['cum_returns'] = np.cumsum(df['returns'])
@@ -45,7 +46,7 @@ def backtest(df, ma1, ma2):
 	z = (df['ma_fast'] > df['ma_slow']) & (df['ma_fast'] != 0)
 
 	df['signal'] = z
-	df['pnl'] = df['returns']*df['signal']
+	df['pnl'] = df['returns'].shift(-1)*df['signal']
 	df['cum_returns_ma_cross_x'] = np.cumsum(df['pnl'])
 
 	xox = np.sum(df['pnl'])
@@ -61,11 +62,7 @@ backtest(df, 22, 11)
 z1 = [22,50,100,125,150,175,200]
 z2 = [11,22,33,44,55,66,77]
 
-q = np.linspace(1,100,100, dtype = 'int')
-print(q)
 
-q1 = np.linspace(1,200,100, dtype = 'int')
-print(q1)
 
 
 result_matrix = np.zeros((len(z1),len(z2)),dtype = 'int')
@@ -89,7 +86,7 @@ plt.colorbar();
 plt.show()
 
 i,j = np.unravel_index(result_matrix.argmax(),result_matrix.shape)
-result_matrix[i,j]
+result_matrix[j,i]
 
 print('opt MA_long %.2f' % z1[i])
 print('opt MA_short %.2f' % z2[j])
