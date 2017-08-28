@@ -88,9 +88,16 @@ plt.colorbar();
 
 plt.show()
 
+i,j = np.unravel_index(result_matrix.argmax(),result_matrix.shape)
+result_matrix[i,j]
 
+print('opt MA_long %.2f' % z1[i])
+print('opt MA_short %.2f' % z2[j])
 
+print(z1[i])
+print(z2[j])
 
+backtest(df,z1[i],z2[j])
 
 
 
