@@ -6,7 +6,9 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib import style
 
-##get alltime daily BTC/USD quotes from Quandl: XXX
+## thisisnthappiness
+
+##get alltime daily BTC/USD quotes from Quandl: 
 
 df = quandl.get("BITFINEX/BTCUSD", authtoken="65bn72F_4tCtK9-XHnAu")
 
