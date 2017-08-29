@@ -10,6 +10,7 @@ import numpy as np
 
 
 
+
 ## aapl = pdr.get_data_yahoo('AAPL', 
 ##                          start=datetime.datetime(2006, 10, 1), 
 ##                          end=datetime.datetime(2012, 1, 1))
@@ -22,6 +23,9 @@ aapl = pd.read_csv('data/aapl_ohlc.csv', header = 0, index_col = 'Date', parse_d
 
 print(aapl.index)
 print(aapl.columns)
+
+print(aapl.describe())
+print(aapl.tail())
 
 ts = aapl['Close'][-10:]
 
@@ -59,7 +63,7 @@ aapl['diff'] = aapl['Open'] - aapl['Close']
 # del aapl['diff']
 
 aapl.Close.plot(grid = True)
-## plt.show() 
+plt.show() 
 
 # Ajust daily close
 daily_close = aapl['Adj Close'] 
@@ -73,3 +77,71 @@ daily_log_returns = np.log(daily_close.pct_change()+1)
 
 print(daily_pct_change.loc['2011'].tail())
 print(daily_log_returns.loc['2011'].tail())
+
+# Resample `aapl` to business months, take last observation as value 
+monthly = aapl.resample('BM').apply(lambda x: x[-1])
+
+# Calculate the monthly percentage change
+monthly.pct_change()
+
+# Resample `aapl` to quarters, take the mean as value per quarter
+quarter = aapl.resample("3M").mean()
+
+# Calculate the quarterly percentage change
+quarter.pct_change()
+
+#d aily returns
+daily_pct_change2 = daily_close / daily_close.shift(+1) -1
+
+print(daily_pct_change.tail())
+print(daily_pct_change2.tail(10))
+
+
+# Plot the distribution of `daily_pct_c`
+daily_pct_change.hist(bins=50)
+plt.show()
+
+# Pull up summary statistics
+print(daily_pct_change.describe())
+
+# Calculate the cumulative daily returns
+cum_daily_return = (1 + daily_pct_change).cumprod()
+
+# Print `cum_daily_return`
+print(cum_daily_return)
+
+cum_daily_return.plot(figsize = (12,8))
+plt.show()
+
+# Resample the cumulative monthly returns
+cum_monthly_return = cum_daily_return.resample('M').mean()
+
+# Print the `cum_monthly_return`
+print(cum_monthly_return)
+
+
+def get(tickers, startdate, enddate):
+	def data(ticker):
+		return (pdr.get_data_yahoo(ticker, start=startdate, end=enddate))	
+	datas = map (data, tickers)
+	return(pd.concat(datas, keys=tickers, names=['Ticker', 'Date']))
+
+
+
+tickers = ['AAPL','IBM','GOOG']
+all_data = get(tickers, datetime.datetime(2006, 10, 1), datetime.datetime(2012, 1, 1))
+
+print(all_data.tail())
+
+
+# Isolate the `Adj Close` values and transform the DataFrame
+daily_close_px = all_data[['Adj Close']].reset_index().pivot('Date', 'Ticker', 'Adj Close')
+
+# Calculate the daily percentage change for `daily_close_px`
+daily_pct_change = daily_close_px.pct_change()
+
+# Plot the distributions
+daily_pct_change.hist(bins=50, sharex=True, figsize=(12,8))
+
+# Show the resulting plot
+plt.show()
