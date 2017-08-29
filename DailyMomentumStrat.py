@@ -1,4 +1,4 @@
-# following: https://www.youtube.com/watch?v=aaWLM60KxGg
+
 
 import tradingWithPython as twp
 import pandas as pd
