@@ -5,8 +5,6 @@ import numpy as np
 import quandl
 import matplotlib.pyplot as plt
 
-#thisisnthappiness
-
 keyFile = open('Authtokens.txt', 'r')
 quandl_token = keyFile.readline()
 
