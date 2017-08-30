@@ -1,5 +1,4 @@
 
-
 import tradingWithPython as twp
 import pandas as pd
 import numpy as np
@@ -87,10 +86,5 @@ plt.show()
 
 print(stratData.daily_returns.sum())
 print(optimized_pnl.sum())
-
-
-
-
-
 
 
